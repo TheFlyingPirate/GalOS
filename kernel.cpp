@@ -1,5 +1,6 @@
 #include "types.hpp"
 #include "gdt.hpp"
+#include "interrupts.hpp"
 typedef void (*constructor());
 extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;
@@ -10,7 +11,7 @@ extern "C" void callConstructors(){
     }
 }
 
-void printf(char* str)
+void printf(int8_t * str)
 {
     uint16_t* VideoMemory = (uint16_t *)0xb8000;
     static uint8_t x = 0 , y = 0;
@@ -61,7 +62,8 @@ extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber)
     printf("This is a Test\n");
     printf("This is a Test\n\n");
     GlobalDescriptorTable gdt;
-
+    InterruptManager interrupts(0x20, &gdt);
+    interrupts.Activate();
 
     while(1){
 
